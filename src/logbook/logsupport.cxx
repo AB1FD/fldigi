@@ -252,6 +252,9 @@ void Export_LOTW()
 			} else
 				str_lotw.append(adifrec);
 		}
+		// works in the buffer and does not do writeFile so field selection not done
+		// see adifio.write file for field selection
+		// inactivate field selections since LOTW only accepts specified fields
 	}
 }
 
@@ -376,7 +379,7 @@ void cb_mnuNewLogbook(Fl_Menu_* m, void* d){
 	}
 
 	progdefaults.logbookfilename = logbook_filename = p;
-std::cout << "logbook filename " << logbook_filename << std::endl;
+	//std::cout << "logbook filename " << logbook_filename << std::endl;
 
 	dlgLogbook->label(fl_filename_name(logbook_filename.c_str()));
 	progdefaults.changed = true;
@@ -919,6 +922,7 @@ void verify_lotw(void *)
 
 	string notice;
 	char sznote[50];
+	int nverified = 0;
 
 	if (lotw_db->nbrRecs() == 0) {
 		notice = "No records in lotw download file";
@@ -927,7 +931,6 @@ void verify_lotw(void *)
 
 		int matchrec;
 		cQsoRec *qrec, *lrec;
-		int nverified = 0;
 		string date;
 		string qdate;
 
@@ -959,17 +962,29 @@ void verify_lotw(void *)
 		snprintf(sznote, sizeof(sznote),"%d records matched", nverified);
 		notice.append(sznote).append("\n");
 		LOG_INFO("%d records matched", nverified);
+		remove(lotw_download_name.c_str()); //kb delete lotwreport.adi after use
 	}
 	fl_alert2("%s", notice.c_str());
-
+	//kb
+	if (nverified) qsodb.isdirty(1);
+	//
 	delete lotw_db;
 }
 
 void cb_btn_verify_lotw(Fl_Button *, void *) {
-
-	string deffname = LoTWDir;
+  // use lotw_download config as path to lotwreport file
+        std::string tpath = HomeDir;
+	std::string dpath = progdefaults.lotw_download;
+	if (!(dpath.front() == PATH_SEP[0]))
+	  tpath.append(dpath);
+	else
+	  tpath.assign(dpath);
+	if (!(tpath.back() ==  PATH_SEP[0])) tpath.append(PATH_SEP);
+        string deffname = tpath.c_str();
 	deffname.append("lotwreport.adi");
-
+	//debug
+	cout << deffname << std::endl;
+	//
 	ifstream f(deffname.c_str());
 
 //	const char* p = FSEL::select(_("LoTW download file"), "ADIF\t*.{adi,adif}", deffname.c_str());
@@ -991,22 +1006,20 @@ naming the file 'lotwreport.adi'");
 }
 
 void cb_export_date_select() {
-	if (qsodb.nbrRecs() == 0) return;
+  	if (qsodb.nbrRecs() == 0) return;
 	int start = atoi(inp_export_start_date->value());
 	int stop = atoi(inp_export_stop_date->value());
 
 	chkExportBrowser->check_none();
-
-	if (!start || !stop) return;
 	int chkdate;
 
 	if (!btn_export_by_date->value()) return;
-
+	//btn_export_by_date->value(1);
 	cQsoRec *rec;
 	for (int i = 0; i < qsodb.nbrRecs(); i++) {
 		rec = qsodb.getRec (i);
 		chkdate = atoi(rec->getField(progdefaults.sort_date_time_off ? QSO_DATE_OFF : QSO_DATE));
-		if (chkdate >= start && chkdate <= stop)
+		if ((!start || chkdate >= start) && (!stop || chkdate <= stop))
 			chkExportBrowser->checked(i+1, 1);
 	}
 
@@ -1049,21 +1062,28 @@ void cb_Export_log() {
 
 void cb_mnuExportADIF_log(Fl_Menu_* m, void* d) {
 	export_to = ADIF;
+	grpFieldsToExport->activate();
 	cb_Export_log();
 }
 
 void cb_mnuExportCSV_log(Fl_Menu_* m, void* d) {
 	export_to = CSV;
+	grpFieldsToExport->activate();
 	cb_Export_log();
 }
 
 void cb_btnExportLoTW() {
 	export_to = LOTW;
+	btnSetLoTWfields->activate();
+	grpFieldsToExport->deactivate();
+	btn_export_by_date->value(0);
+	btnSetLoTWfields->value(1);
 	cb_Export_log();
 }
 
 void cb_mnuExportTEXT_log(Fl_Menu_* m, void *d) {
 	export_to = TEXT;
+	grpFieldsToExport->activate();
 	cb_Export_log();
 }
 

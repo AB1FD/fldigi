@@ -427,15 +427,15 @@ static const char szBaudRates[] = "300|600|1200|2400|4800|9600|19200|38400|57600
 static const char szProsigns[] = "~|%|&|+|=|{|}|<|>|[|]| ";} {}
   Fl_Window {} {
     label {Fldigi configuration} open
-    xywh {675 24 600 425} type Double color 45 selection_color 51 labelsize 18 align 80 non_modal visible
+    xywh {786 85 600 425} type Double color 45 selection_color 51 labelsize 18 align 80 non_modal visible
   } {
     Fl_Tabs tabsConfigure {open
       xywh {0 0 600 395} color 50 selection_color 50
     } {
       Fl_Group tabOperator {
         label Operator
-        callback {progdefaults.changed = true;} open selected
-        xywh {0 25 600 365} when 1
+        callback {progdefaults.changed = true;} open
+        xywh {0 25 600 365} when 1 hide
       } {
         Fl_Group {} {
           label {Station / Operator} open
@@ -873,7 +873,7 @@ progdefaults.changed = true;}
           }
           Fl_Group tabLogServer {
             label Log open
-            xywh {0 50 600 340} hide
+            xywh {0 50 600 340}
           } {
             Fl_Tabs tabsLog {open
               xywh {0 50 600 340}
@@ -981,7 +981,7 @@ progdefaults.changed = true;}
               }
               Fl_Group grpRX_Text {
                 label {Rx Text}
-                xywh {0 75 600 315} hide
+                xywh {0 75 600 315}
               } {
                 Fl_Group {} {
                   label {Rx Text} open
@@ -1096,7 +1096,7 @@ progdefaults.changed = true;}
               }
               Fl_Group grpN3FJP_logs {
                 label {N3FJP logs} open
-                xywh {0 75 600 315}
+                xywh {0 75 600 315} hide
               } {
                 Fl_Text_Display txt_N3FJP_data {
                   label {TCP/IP Data Stream}
@@ -2955,7 +2955,7 @@ progdefaults.changed = true;}
           }
           Fl_Group tab_touch {
             label Touch
-            xywh {0 50 600 340}
+            xywh {0 50 600 340} hide
           } {
             Fl_Box {} {
               label {Note:
@@ -7530,7 +7530,7 @@ if (progdefaults.kml_enabled) {
       }
       Fl_Group tabQRZ {
         label Web open
-        xywh {0 25 600 365} hide
+        xywh {0 25 600 365}
       } {
         Fl_Tabs tabsQRZ {open
           xywh {0 25 600 365}
@@ -7911,6 +7911,15 @@ o->label((inpLOTW_pwd->type() & FL_SECRET_INPUT) ? _("Show") : _("Hide"));}
             Fl_Box {} {
               label {Match logbook records with LoTW download file}
               xywh {175 356 395 24} align 20
+            }
+            Fl_Input inpLOTW_download {
+              label Download
+              callback {progdefaults.lotw_download = o->value();
+progdefaults.changed = true;} selected
+              tooltip {Set this to directory LOTW downloads report to. You cannot change LOTW from here.} xywh {390 126 200 24} labeltype NO_LABEL
+              code0 {o->value(progdefaults.lotw_download.c_str());}
+              code2 {inpLOTW_download->labelsize(FL_NORMAL_SIZE);}
+              class Fl_Input2
             }
           }
         }

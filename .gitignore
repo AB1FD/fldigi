@@ -1,0 +1,8 @@
+#*#
+*.a
+*.log
+*.o
+*~
+/TAGS
+/TAGS
+fldigi-main.o

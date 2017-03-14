@@ -6347,6 +6347,13 @@ o->label((inpLOTW_pwd->type() & FL_SECRET_INPUT) ? _("Show") : _("Hide"));
 
 Fl_Button *btn_verify_lotw=(Fl_Button *)0;
 
+Fl_Input2 *inpLOTW_download=(Fl_Input2 *)0;
+
+static void cb_inpLOTW_download(Fl_Input2* o, void*) {
+  progdefaults.lotw_download = o->value();
+progdefaults.changed = true;
+}
+
 Fl_Group *tabAutoStart=(Fl_Group *)0;
 
 static void cb_tabAutoStart(Fl_Group*, void*) {
@@ -7029,6 +7036,7 @@ Fl_Double_Window* ConfigureDialog() {
       { tabOperator = new Fl_Group(0, 25, 600, 365, _("Operator"));
         tabOperator->callback((Fl_Callback*)cb_tabOperator);
         tabOperator->when(FL_WHEN_CHANGED);
+        tabOperator->hide();
         { Fl_Group* o = new Fl_Group(50, 50, 485, 245, _("Station / Operator"));
           o->box(FL_ENGRAVED_FRAME);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE));
@@ -7450,7 +7458,6 @@ Fl_Double_Window* ConfigureDialog() {
             tabUserInterface->end();
           } // Fl_Group* tabUserInterface
           { tabLogServer = new Fl_Group(0, 50, 600, 340, _("Log"));
-            tabLogServer->hide();
             { tabsLog = new Fl_Tabs(0, 50, 600, 340);
               { grp_Log_QSO = new Fl_Group(0, 75, 600, 315, _("QSO"));
                 grp_Log_QSO->hide();
@@ -7551,7 +7558,6 @@ Fl_Double_Window* ConfigureDialog() {
                 grp_Log_QSO->end();
               } // Fl_Group* grp_Log_QSO
               { grpRX_Text = new Fl_Group(0, 75, 600, 315, _("Rx Text"));
-                grpRX_Text->hide();
                 { Fl_Group* o = new Fl_Group(62, 96, 496, 113, _("Rx Text"));
                 o->box(FL_ENGRAVED_FRAME);
                 o->align(Fl_Align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE));
@@ -7646,6 +7652,7 @@ ab and newline are automatically included."));
                 grpMacLogger->end();
               } // Fl_Group* grpMacLogger
               { grpN3FJP_logs = new Fl_Group(0, 75, 600, 315, _("N3FJP logs"));
+                grpN3FJP_logs->hide();
                 { Fl_Text_Display* o = txt_N3FJP_data = new Fl_Text_Display(5, 148, 590, 170, _("TCP/IP Data Stream"));
                 txt_N3FJP_data->align(Fl_Align(FL_ALIGN_TOP_LEFT));
                 Fl_Text_Buffer *txtbuffer = new Fl_Text_Buffer();
@@ -8596,6 +8603,7 @@ ab and newline are automatically included."));
             tabColorsFonts->end();
           } // Fl_Group* tabColorsFonts
           { tab_touch = new Fl_Group(0, 50, 600, 340, _("Touch"));
+            tab_touch->hide();
             { Fl_Box* o = new Fl_Box(15, 70, 570, 52, _("Note:\nThese configuration items are useful for but not unique to using fldig\
 i on a\ntouch screen device such as a tablet."));
               o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
@@ -13099,7 +13107,6 @@ and restarted if needed."));
         tabMisc->end();
       } // Fl_Group* tabMisc
       { tabQRZ = new Fl_Group(0, 25, 600, 365, _("Web"));
-        tabQRZ->hide();
         { tabsQRZ = new Fl_Tabs(0, 25, 600, 365);
           { Fl_Group* o = new Fl_Group(0, 50, 600, 340, _("Call Lookup"));
             o->hide();
@@ -13493,6 +13500,22 @@ work!"));
             { Fl_Box* o = new Fl_Box(175, 356, 395, 24, _("Match logbook records with LoTW download file"));
               o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
             } // Fl_Box* o
+            { Fl_Input2* o = inpLOTW_download = new Fl_Input2(390, 126, 200, 24, _("Download"));
+              inpLOTW_download->tooltip(_("Set this to directory LOTW downloads report to. You cannot change LOTW from h\
+ere."));
+              inpLOTW_download->box(FL_DOWN_BOX);
+              inpLOTW_download->color(FL_BACKGROUND2_COLOR);
+              inpLOTW_download->selection_color(FL_SELECTION_COLOR);
+              inpLOTW_download->labeltype(FL_NO_LABEL);
+              inpLOTW_download->labelfont(0);
+              inpLOTW_download->labelsize(14);
+              inpLOTW_download->labelcolor(FL_FOREGROUND_COLOR);
+              inpLOTW_download->callback((Fl_Callback*)cb_inpLOTW_download);
+              inpLOTW_download->align(Fl_Align(FL_ALIGN_LEFT));
+              inpLOTW_download->when(FL_WHEN_RELEASE);
+              o->value(progdefaults.lotw_download.c_str());
+              inpLOTW_download->labelsize(FL_NORMAL_SIZE);
+            } // Fl_Input2* inpLOTW_download
             tabLOTW->end();
           } // Fl_Group* tabLOTW
           tabsQRZ->end();

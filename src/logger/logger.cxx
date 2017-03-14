@@ -230,7 +230,6 @@ MFSK4 MFSK11 MFSK22 MFSK31 MFSK32 MFSK64 MFSK128 MFSK64L MFSK128L";
 	putadif(FREQ, temp.c_str(), strrec);
 
 	putadif(QSO_DATE, rec.getField(QSO_DATE), strrec);
-	//KB add BAND
 	putadif(BAND, rec.getField(BAND), strrec);
 
 	temp = rec.getField(TIME_ON);

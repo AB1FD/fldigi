@@ -7921,6 +7921,15 @@ progdefaults.changed = true;} selected
               code2 {inpLOTW_download->labelsize(FL_NORMAL_SIZE);}
               class Fl_Input2
             }
+            Fl_Input inpLOTW_download {
+              label Download
+              callback {progdefaults.lotw_download = o->value();
+progdefaults.changed = true;} selected
+              tooltip {Set this to directory LOTW downloads report to. You cannot change LOTW from here.} xywh {390 126 200 24} labeltype NO_LABEL
+              code0 {o->value(progdefaults.lotw_download.c_str());}
+              code2 {inpLOTW_download->labelsize(FL_NORMAL_SIZE);}
+              class Fl_Input2
+            }
           }
         }
       }

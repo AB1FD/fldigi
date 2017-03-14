@@ -37,7 +37,7 @@ Function {create_logbook_dialogs()} {open return_type void
 } {
   Fl_Window wExport {
     label {Export Setup} open
-    xywh {815 473 675 480} type Double visible
+    xywh {995 340 675 480} type Double visible
   } {
     Fl_Group {} {
       label {Select Records to Export} open
@@ -58,15 +58,13 @@ Function {create_logbook_dialogs()} {open return_type void
       }
       Fl_Input inp_export_start_date {
         label {Start Date}
-        callback {cb_export_date_select();} selected
         tooltip {Start date for export} xywh {14 422 100 22} align 5 when 1
         code0 {\#include "calendar.h"}
         code1 {inp_export_start_date->format(2);}
         class Fl_DateInput
       }
       Fl_Input inp_export_stop_date {
-        label {Stop Date}
-        callback {cb_export_date_select();}
+        label {Stop Date} selected
         tooltip {Inclusive stop date for export} xywh {138 422 100 22} align 5 when 1
         code0 {\#include "calendar.h"}
         code1 {inp_export_stop_date->format(2);}
@@ -86,7 +84,8 @@ Export_log();}
     }
     Fl_Button btnCancel {
       label Cancel
-      callback {wExport->hide();}
+      callback {wExport->hide();
+chkExportBrowser->clear();}
       xywh {405 454 90 24}
     }
     Fl_Group grpFieldsToExport {
@@ -201,7 +200,7 @@ btnSelectStaCity->value(1);}
       }
       Fl_Check_Button btnSelectQSOdateOff {
         label {QSO Date Off}
-        xywh {402 152 70 15} down_box DOWN_BOX value 1
+        xywh {402 152 70 15} down_box DOWN_BOX
       }
       Fl_Check_Button btnSelectTimeON {
         label {Time ON}
@@ -351,7 +350,6 @@ btnSelectStaCity->value(0);}
         callback {btnSelectCall->value(1);
 btnSelectName->value(0);
 btnSelectFreq->value(1);
-//btnSelectBand->value(0);
 btnSelectBand->value(1);
 btnSelectMode->value(1);
 btnSelectQSOdateOn->value(1);
@@ -406,7 +404,7 @@ btnSelectStaCity->value(0);}
   }
   Fl_Window dlgLogbook {
     label Logbook open
-    xywh {1070 511 590 490} type Double resizable visible
+    xywh {1070 511 590 490} type Double hide resizable
   } {
     Fl_Input inpDate_log {
       label {Date On}

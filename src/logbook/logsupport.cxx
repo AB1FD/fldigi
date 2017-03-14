@@ -283,6 +283,7 @@ void cb_lotw_save_review(Fl_Button *, void *)
 void cb_lotw_clear_review(Fl_Button *, void *)
 {
 	buff->text("");
+	str_lotw.erase(0);
 }
 
 void cb_review_lotw()
@@ -972,8 +973,8 @@ void verify_lotw(void *)
 }
 
 void cb_btn_verify_lotw(Fl_Button *, void *) {
-  // use lotw_download config as path to lotwreport file
-        std::string tpath = HomeDir;
+	// use lotw_download config as path to lotwreport file
+	std::string tpath = HomeDir;
 	std::string dpath = progdefaults.lotw_download;
 	if (!(dpath.front() == PATH_SEP[0]))
 	  tpath.append(dpath);
@@ -983,23 +984,21 @@ void cb_btn_verify_lotw(Fl_Button *, void *) {
         string deffname = tpath.c_str();
 	deffname.append("lotwreport.adi");
 	//debug
-	cout << deffname << std::endl;
+	cout << deffname << std::endl; 
 	//
 	ifstream f(deffname.c_str());
 
 //	const char* p = FSEL::select(_("LoTW download file"), "ADIF\t*.{adi,adif}", deffname.c_str());
 
-//	if (!p || !*p) {
 	if (!f) {
 		fl_alert2("\
 Could not find LoTW report file.\n\n\
 Download from ARRL's LoTW page after logging in at:\n\n\
 https://lotw.arrl.org/lotwuser/default\n\n\
-Store the report file to the fldigi LOTW folder,\n\n\
-naming the file 'lotwreport.adi'");
+Set the download file path in the LOTW window\n\n\
+Usually the \"Downloads\" directory your browser uses.");
 		return;
 	}
-//	lotw_download_name = p;
 	f.close();
 	lotw_download_name = deffname;
 	Fl::awake(verify_lotw);
@@ -1010,7 +1009,8 @@ void cb_export_date_select() {
 	int start = atoi(inp_export_start_date->value());
 	int stop = atoi(inp_export_stop_date->value());
 
-	chkExportBrowser->check_none();
+	chkExportBrowser->check_none(); // clear checks because we are
+									// going to just check selected dates
 	int chkdate;
 
 	if (!btn_export_by_date->value()) return;
@@ -1020,7 +1020,7 @@ void cb_export_date_select() {
 		rec = qsodb.getRec (i);
 		chkdate = atoi(rec->getField(progdefaults.sort_date_time_off ? QSO_DATE_OFF : QSO_DATE));
 		if ((!start || chkdate >= start) && (!stop || chkdate <= stop))
-			chkExportBrowser->checked(i+1, 1);
+		    chkExportBrowser->checked(i+1, 1);
 	}
 
 	chkExportBrowser->redraw();
@@ -1048,15 +1048,17 @@ void cb_Export_log() {
 #endif
 	for( int i = 0; i < qsodb.nbrRecs(); i++ ) {
 		rec = qsodb.getRec (i);
-		snprintf(line,sizeof(line),"%8s %4s %-10s %-10s %-s",
-			rec->getField(QSO_DATE),
-			rec->getField((export_to == LOTW ? TIME_ON : TIME_OFF) ),
-			rec->getField(CALL),
-			szfreq(rec->getField(FREQ)),
-			rec->getField(MODE) );
-        chkExportBrowser->add(line);
-	}
-	cb_export_date_select();
+		string lotwsdate = rec->getField(LOTWSDATE);
+		snprintf(line,sizeof(line),"%8s %4s %-10s %-10s %-6s %-s",
+			     rec->getField(QSO_DATE),
+			     rec->getField((export_to == LOTW ? TIME_ON : TIME_OFF) ),
+			     rec->getField(CALL),
+			     szfreq(rec->getField(FREQ)),
+				 rec->getField(BAND),
+			     rec->getField(MODE) );
+		chkExportBrowser->add(line);
+	} 
+	//cb_export_date_select();
 	wExport->show();
 }
 
